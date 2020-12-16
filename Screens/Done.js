@@ -1,58 +1,77 @@
-// React Native Tab
-// https://aboutreact.com/react-native-tab/
+
 import * as React from 'react';
-import {
-  TouchableOpacity,
-  StyleSheet,
-  View,
-  Text,
-
-} from 'react-native';
-
+import {useState, useEffect} from 'react';
+import {  TouchableOpacity,  StyleSheet,  View,  FlatList} from 'react-native';
+import {Icon, ListItem} from 'react-native-elements';
+import* as SQLite from'expo-sqlite';
+const db = SQLite.openDatabase('issue.db');
 const Done = ({ navigation }) => {
-  return (
-    <View style={{ flex: 1 }}>
-      <View style={{ flex: 1 , padding: 16}}>
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <Text
-            style={{
-              fontSize: 25,
-              textAlign: 'center',
-              marginBottom: 16
-            }}>
-            Hello{'\n'}(You are on Done)
-          </Text>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={
-              () => navigation.navigate('FirstPage')
-            }>
-            <Text>Go to Home Tab</Text>
-          </TouchableOpacity>
-        </View>
-        <Text
-          style={{
-            fontSize: 18,
-            textAlign: 'center',
-            color: 'grey'
-          }}>
-        React Native Tab Navigation
-        </Text>
-        <Text
-          style={{
-            fontSize: 16,
-            textAlign: 'center',
-            color: 'grey'
-          }}>
-          www.aboutreact.com
-        </Text>
-      </View>
-    </View>
+              
+    const [todoList, setTodoList] = useState([])
+
+    useEffect(()=> {
+       
+            db.transaction(tx =>{
+              tx.executeSql('select * from doneLists', [], (_, {rows}) => setTodoList(rows._array));    
+                 
+            })
+          
+          
+        });
+
+        const updateList = () => {
+            db.transaction(tx =>{
+              tx.executeSql('select * from doneLists', [], (_, {rows}) => setTodoList(rows._array));
+              
+             
+            })
+          }
+          const deleteItem =(id) => {
+            db.transaction(tx => {
+              tx.executeSql('delete from doneLists where id = ?;', [id]);}, null, updateList)
+              
+            }
+
+            const updateItemList = (id) => {
+                db.transaction(tx => {
+                    tx.executeSql('UPDATE  doingLists SET visible = 2 where id = ?;', [id]);
+                    tx.executeSql('delete  from doneLists  where id = ?;', [id]);}, null, updateList)
+                    alert('moved to doing stage')
+                    };   
+        
+                    return (
+                      <View style={{ flex: 1 }}>
+                        <View style={{  flex: 1, padding: 5}}>
+                          <View
+                            style={{
+                              flex: 2,
+                              
+                            }}>
+                                 <FlatList
+                                  keyExtractor={item => item.id.toString()}
+                                  data = {todoList}
+                                  renderItem = {({item}) =>                                  
+                                  <View style={ item.visible =='3' ? { display:'none'} : {display:'flex'}}>
+                                  <ListItem bottomDivider >
+                                  <View style= {{flex: 1, flexDirection:'row', backgroundColor:'#20b2aa'}}>
+                                  <ListItem.Content style= {{padding: 10}} >
+                                      <ListItem.Title style={{textDecorationLine:'line-through', color:'#800080', textDecorationStyle:'double', fontStyle:'italic'}}>{item.todos}</ListItem.Title>
+                                      <ListItem.Subtitle>{item.priority}</ListItem.Subtitle>
+                                  </ListItem.Content>
+                                  <Icon raised  name='delete'  type='material'  color='#eb3434' onPress = {() => deleteItem(item.id)} />
+                                  <Icon raised  name='undo'  type='font-awesome'   color='#006400' onPress = {() => updateItemList(item.id)} />
+                                  </View>
+                                  </ListItem>
+                                  
+                                  </View>
+                                  }                              
+                                  />                           
+                          </View>
+                       
+                      </View>
+                      
+                    </View>
+    
   );
 }
 
@@ -65,4 +84,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
 });
+
+
+
 export default Done;

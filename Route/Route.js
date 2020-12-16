@@ -1,6 +1,8 @@
 
 import * as React from 'react';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import { MaterialIcons } from '@expo/vector-icons';
+import {Icon} from 'react-native-elements';
 import FirstPage from '../Screens/Todo';
 import SecondPage from '../Screens/Doing';
 import ThirdPage from '../Screens/Done';
@@ -11,17 +13,18 @@ export default function Route() {
       <Tab.Navigator
         initialRouteName="FirstPage"
         tabBarOptions={{
-          activeTintColor: '#FFFFFF',
-          inactiveTintColor: '#F8F8F8',
+          
+          activeTintColor: '#fffaf0',
+          inactiveTintColor: '#006400',
           style: {
-            backgroundColor: '#633689',
+            backgroundColor: '#3cb371',
           },
           labelStyle: {
             textAlign: 'center',
           },
           indicatorStyle: {
-            borderBottomColor: '#87B56A',
-            borderBottomWidth: 2,
+            borderBottomColor: '#9370db',
+            borderBottomWidth: 4,
           },
         }}>
         <Tab.Screen
@@ -29,39 +32,21 @@ export default function Route() {
           component={FirstPage}
           options={{
             tabBarLabel: 'Issues',
-            // tabBarIcon: ({ color, size }) => (
-            //   <MaterialCommunityIcons
-            //       name="home"
-            //       color={color}
-            //       size={size}
-            //     />
-            // ),
+            tabBarIcon: () => (
+                <MaterialIcons name="home" size={18} color={'blue'} />
+            ),
           }}  />
         <Tab.Screen
           name="SecondPage"
           component={SecondPage}
           options={{
             tabBarLabel: 'Doing',
-            // tabBarIcon: ({ color, size }) => (
-            //   <MaterialCommunityIcons
-            //       name="settings"
-            //       color={color}
-            //       size={size}
-            //     />
-            // ),
-          }} />
+            }} />
           <Tab.Screen
           name="ThirdPage"
           component={ThirdPage}
           options={{
             tabBarLabel: 'Done',
-            // tabBarIcon: ({ color, size }) => (
-            //   <MaterialCommunityIcons
-            //       name="settings"
-            //       color={color}
-            //       size={size}
-            //     />
-            // ),
           }} />
       </Tab.Navigator>
     );
